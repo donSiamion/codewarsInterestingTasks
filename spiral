@@ -1,0 +1,125 @@
+// https://www.codewars.com/kata/534e01fbbb17187c7e0000c6
+
+function spiralize (n) {
+  var arr = []
+  for (let i = 0; i < n; i++) {
+    arr.push([])
+    for (let j = 0; j < n; j++) {
+      arr[i].push(0)
+    }
+  }
+  
+  let result = true
+  let [x, y] = [0, 0]
+  
+  arr[x][y] = 1
+  
+  while (result) {
+    result = toRight(x,y,arr)
+    if (result !== false) {
+      [x, y] = result
+      result = toDown(x,y,arr)
+      if (result !== false) {
+        [x, y] = result
+        result = toLeft(x,y,arr)
+        if (result !== false) {
+          [x, y] = result
+          result = toUp(x,y,arr)
+          if (result !== false) {
+            [x, y] = result
+          }
+        }
+      }
+    }
+  }
+
+  return arr;
+}
+
+function toRight(x,y, arr) {
+  for (let i = x; i < arr.length; i++) {
+    if (i + 2 > arr.length) {
+      return [i, y]
+    }
+    if (i + 2 < arr.length && arr[y][i + 2] === 1) {
+      return arr[y + 2][i] !== 1 ? [i, y] : false
+    } else {
+      arr[y][i + 1] = 1
+    }
+  }
+}
+
+function toDown(x,y, arr) {
+  for (let i = y; i < arr.length; i++) {
+    if (i + 2 > arr.length) {
+      return [x, i]
+    }
+    if (i + 2 < arr.length && arr[i + 2][x] === 1) {
+      return arr[i - 1][x - 1] !== 1 ? [x, i] : false
+    } else {
+      arr[i + 1][x] = 1
+    }
+  }
+}
+
+function toLeft(x,y, arr) {
+  for (let i = x; i > 0; i--) {
+    if (i - 1 === 0) {
+      arr[y][i - 1] = 1
+      return [0, y]
+    } else {
+      if (i - 2 < 0) {
+        return [i, y]
+      }
+      if (i - (y < arr.length ? 1 : 2) > 0 && arr[y][i - 2] === 1) {
+        return arr[y - 2][i] !== 1 ? [i, y] : false
+      } else {
+        arr[y][i - 1] = 1
+      }
+    }
+  }
+}
+
+function toUp(x,y, arr) {
+  for (let i = y; i > 0; i--) {
+    if (i - 2 <= 0) {
+      return [x, i]
+    }
+    if (i - (x < arr.length ? 1 : 2) > 0 && arr[i - 2][x] === 1) {
+      return arr[i + 1][x + 1] !== 1 ? [x, i] : false
+    } else {
+      arr[i - 1][x] = 1
+    }
+  }
+}
+
+function consoleDrow(arr) {
+    let consoleLine = ''
+    for(let i = 0; i < (arr[0].length * 5 + 1); i++) {
+      consoleLine += '—'
+    }
+    console.log(consoleLine)
+    for (let x = 0; x < arr.length; x++) {
+      const line = arr[x];
+      consoleLine = ''
+      for (let y = 0; y < line.length; y++) {
+        const element = line[y];
+        switch (true) {
+          case element == 1:
+            consoleLine += '\x1b[33m' + element + '\x1b[0m'
+            break;
+          case element == 0:
+            consoleLine += '\x1b[44m' + element + '\x1b[0m'
+            break;
+          default:
+            break;
+        }      
+      }
+      console.log(consoleLine)
+    }
+  }
+
+  consoleDrow(spiralize(11))
+  consoleDrow(spiralize(15))
+  consoleDrow(spiralize(20))
+  consoleDrow(spiralize(24))
